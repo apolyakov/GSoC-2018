@@ -1,37 +1,14 @@
-## Welcome to GitHub Pages
+## GSoC 2018 Final Evaluation
+This blog post documents the work I did for GSoC'18 on the LLVM Compiler Infrastructure project.
 
-You can use the [editor on GitHub](https://github.com/PolyakovAlexander/GSoC-18/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+## Title
+[Re-implement lldb-mi to correctly use the LLDB public SB API.](http://llvm.org/OpenProjects.html#lldb-reimplement-lldb-mi)
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+## Introduction
+First of all, let's take a look at some basics and definitions.  
+* **LLDB** is a next generation, high-performance debugger. It is built as a set of reusable components which highly leverage existing libraries in the larger LLVM Project, such as the Clang expression parser and LLVM disassembler.  
+* **The Machine Interface (MI) Driver** is a standalone executable that sits between a client IDE (a GUI debugger for example) and a debugging API (LLDB), translating MI commands into equivalent LLDB actions. It also listens to events from the debugger such as “hit a breakpoint” and translates the event into an appropriate MI response for the client to interpret. This allows IDEs that would normally drive the GNU Debugger (GDB), or other back ends that understand the MI commands, to work with LLDB, with very similar functionality. It also worths noting that MI is a **text interface**.
 
-### Markdown
+In our case, the **lldb-mi** is the MI Driver and **LLDB** is used as a back end for debugging.
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/PolyakovAlexander/GSoC-18/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+## Description
