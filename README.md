@@ -50,4 +50,9 @@ After been accepted by LLVM Compiler Infrastructure as a GSoC'18 student I first
 # run target
 -exec-run
 ```
-The pending breakpoints support means that if we execute above mentioned sequence of commands we will hit the breakpoint on _hit_me_ and stop. Also, if selected binary doesn't have _hit_me_ function we will not stop. You can see [the commit](https://github.com/llvm-mirror/lldb/commit/26acfa38acd28a4fe345ef9d1268c8959f24c319).
+The pending breakpoints support means that if we execute above mentioned sequence of commands we will hit the breakpoint on _hit_me_ and stop. Also, if selected binary doesn't have _hit_me_ function we will not stop. You can see [the commit](https://github.com/llvm-mirror/lldb/commit/26acfa38acd28a4fe345ef9d1268c8959f24c319).  
+Making that commit, we have faced with a problem of testing. Existed approach of lldb-mi testing is to run a command and then wait a timeout for its result. It leads to two things:
+* a misbehaving testcase takes at least the time of the timeout to complete unsuccessfully
+* a very slow running test can fail if the timeout is reached before the expected result is computed
+
+Thus, to prevent lldb-mi from unexpected failures, we decided to test it using llvm tools: **lit &mdash; LLVM Integrated Tester, and FileCheck &mdash; Flexible pattern matching file verifier**. In this case, we run lldb-mi test session and pipe its output to FileCheck which tries to match given output with some patterns.
