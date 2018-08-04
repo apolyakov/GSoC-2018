@@ -9,12 +9,12 @@ First of all, let's take a look at some basics and definitions.
 * **LLDB** is a next generation, high-performance debugger. It is built as a set of reusable components which highly leverage existing libraries in the larger LLVM Project, such as the Clang expression parser and LLVM disassembler.  
 * **The Machine Interface (MI) Driver** is a standalone executable that sits between a client IDE (a GUI debugger for example) and a debugging API (LLDB), translating MI commands into equivalent LLDB actions. It also listens to events from the debugger such as “hit a breakpoint” and translates the event into an appropriate MI response for the client to interpret. This allows IDEs that would normally drive the GNU Debugger (GDB), or other back ends that understand the MI commands, to work with LLDB, with very similar functionality. It also worths noting that MI is a **text interface**.
 
-In our case, the **lldb-mi** is the MI Driver and **LLDB** is used as a back end for debugging.
+In our case, the **lldb-mi** is the MI Driver and the **LLDB** is used as a back end for debugging.
 
 ## Description
 The lldb-mi should provide an implementation for all the MI commands, but current support is incomplete and, more importantly, some commands are implemented using wrong abstraction layer. Instead of asking the LLDB to execute some command _(e.g. SBCommandInterpreter::HandleCommand)_ and then scraping and processing its textual output, it should be using the methods and data structures provided by the public SB API.  
 
-My task as a GSoC student was to get rid of using _HandleCommand_, reimplement lldb-mi commands to correctly use public SB API, add new API if needed. It will reduce maintenance effort for the project since the public API is guaranteed to remain stable.
+My task as a GSoC student was to get rid of using _HandleCommand_ and parsing its output with regular expressions, reimplement lldb-mi commands to correctly use public SB API, add new API if needed. It will reduce maintenance effort for the project since the public API is guaranteed to remain stable.
 
 ## Team
 * Student(me)
@@ -55,4 +55,13 @@ Making that commit, we have faced with a problem of testing. Existed approach of
 * a misbehaving testcase takes at least the time of the timeout to complete unsuccessfully
 * a very slow running test can fail if the timeout is reached before the expected result is computed
 
-Thus, to prevent lldb-mi from unexpected failures, we decided to test it using llvm tools: **lit &mdash; LLVM Integrated Tester, and FileCheck &mdash; Flexible pattern matching file verifier**. In this case, we run lldb-mi test session and pipe its output to FileCheck which tries to match given output with some patterns.
+To prevent lldb-mi from unexpected failures we decided to test it using llvm tools: **lit &mdash; LLVM Integrated Tester, and FileCheck &mdash; Flexible pattern matching file verifier**. In this case, we run a lldb-mi session, collect its output and pipe it to the FileCheck. Also, for test purposes only, we added a new option to lldb-mi &mdash; _synchronous_ ([link to commit](https://github.com/llvm-mirror/lldb/commit/46982f26bc4f11492a81370876cf012fd80d3810)). The lldb-mi consumes input asynchronously from its command handler, so _synchronous_ option allows us to be sure that the lldb-mi will handle given commands consistently. Doing this we get rid of cases like giving lldb-mi two commands for instance `-file-exec-and-symbols some_binary` and `-exec-run` and exiting with error `Current SBTarget is invalid` caused since `-exec-run` has been handled first.  
+
+Reimplementing a MI command you should save its behavior for all the clients that may use it. Thus, to reimplement one MI command I did following: 
+1. First of all, using source code and gdb-mi specification which lldb-mi is compatible with, I learned how a command should work.
+2. Changed existing SB API or added a new one.
+3. Finally, implemented a command without _HandleCommand_ hack using methods and data structures from SB API.
+
+If you are interested in all the details of this project you may look at the link to google spreadsheets in which I collected all commits I done during GSoC.
+
+## My next plans
