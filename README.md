@@ -68,3 +68,9 @@ Here I described how I started my GSoC project, how it led us to the problem of 
 As was noted, the lldb-mi is currently incomplete: it doesn't implement the whole set of MI commands, so I'll try to add a new commands into it. Also, I'm going to learn more about how a compiler work and try myself at Clang and LLVM.
 
 Thanks to the LLVM Community for helping me with this project and Google for this awesome program.
+
+## References
+1. https://docs.google.com/spreadsheets/d/1B5Ogofs7IdSPg9jKNdMIQy4jd5tKHbOpepiuHPMAR70/edit?usp=sharing
+2. https://github.com/PolyakovAlexander
+3. https://lldb.llvm.org/
+4. https://ftp.gnu.org/old-gnu/Manuals/gdb/html_chapter/gdb_22.html
