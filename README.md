@@ -14,7 +14,7 @@ In our case, the **lldb-mi** is the MI Driver and the **LLDB** is used as a back
 ## Description
 The lldb-mi should provide an implementation for all the MI commands, but current support is incomplete and, more importantly, some commands are implemented using wrong abstraction layer. Instead of asking the LLDB to execute some command _(e.g. SBCommandInterpreter::HandleCommand)_ and then scraping and processing its textual output, it should be using the methods and data structures provided by the public SB API.  
 
-My task as a GSoC student was to get rid of using _HandleCommand_ and parsing its output with regular expressions, reimplement lldb-mi commands to correctly use public SB API, add new API if needed. It will reduce maintenance effort for the project since the public API is guaranteed to remain stable.
+My task as a GSoC student was to get rid of using _HandleCommand_ and parsing its output with regular expressions, to reimplement lldb-mi commands to correctly use public SB API, to add new API if needed. It will reduce maintenance effort for the project since the public API is guaranteed to remain stable.
 
 ## Team
 * Student(me)
@@ -24,7 +24,7 @@ My task as a GSoC student was to get rid of using _HandleCommand_ and parsing it
 
 The LLVM Community was also very helpful in reviewing patches on [reviews.llvm.org](reviews.llvm.org) and responding to my queries via email. Amongst the very helpful community members are: [Greg Clayton](https://reviews.llvm.org/p/clayborg/), [Pavel Labath](https://reviews.llvm.org/p/labath/), [Jim Ingham](https://reviews.llvm.org/p/jingham/) and [Stella Stamenova](https://reviews.llvm.org/p/stella.stamenova/).
 
-## What I did
+## What did I do
 In my proposal I've noted **eleven** commands and methods which use _HandleCommand_ and should be reimplemented. They are:
 1. exec-continue
 1. exec-next
@@ -38,7 +38,7 @@ In my proposal I've noted **eleven** commands and methods which use _HandleComma
 1. target-select
 1. CMICmnLLDBDebuggerHandleEvents::HandleProcessEventStateSuspended
 
-After been accepted by LLVM Compiler Infrastructure as a GSoC'18 student I first worked on improvement of _break-insert_ command to get more familiar with the code base and a review process. The main task was to add support of pending breakpoints. For example:
+After been accepted by the LLVM Compiler Infrastructure as a GSoC'18 student I first worked on improvement of _break-insert_ command to get more familiar with the code base and a review process. The main task was to add support of pending breakpoints. For example:
 ```
 # start lldb-mi session without debug target
 ./lldb-mi
@@ -55,13 +55,13 @@ Making that commit, we have faced with a problem of testing. Existed approach of
 * a misbehaving testcase takes at least the time of the timeout to complete unsuccessfully
 * a very slow running test can fail if the timeout is reached before the expected result is computed
 
-To prevent lldb-mi from unexpected failures we decided to test it using llvm tools: **lit &mdash; LLVM Integrated Tester, and FileCheck &mdash; Flexible pattern matching file verifier**. In this case, we run a lldb-mi session, collect its output and pipe it to the FileCheck. Also, for test purposes only, we added a new option to lldb-mi &mdash; _synchronous_ ([link to commit](https://github.com/llvm-mirror/lldb/commit/46982f26bc4f11492a81370876cf012fd80d3810)). The lldb-mi consumes input asynchronously from its command handler, so _synchronous_ option allows us to be sure that the lldb-mi will handle given commands consistently. Doing this we get rid of cases like giving lldb-mi two commands for instance `-file-exec-and-symbols some_binary` and `-exec-run` and exiting with error `Current SBTarget is invalid` caused since `-exec-run` has been handled first.  
+To prevent lldb-mi from unexpected failures we decided to test it using llvm tools: **lit &mdash; LLVM Integrated Tester, and FileCheck &mdash; Flexible pattern matching file verifier**. In this case, we run a lldb-mi session, collect its output and pipe it to the FileCheck. Also, for testing purposes only, we added a new option to lldb-mi &mdash; _synchronous_ ([link to commit](https://github.com/llvm-mirror/lldb/commit/46982f26bc4f11492a81370876cf012fd80d3810)). The lldb-mi consumes input asynchronously from its command handler, so the _synchronous_ option makes sure that the lldb-mi will handle given commands consistently. Thereby we get rid of cases like giving lldb-mi two commands for instance `-file-exec-and-symbols some_binary` and `-exec-run` and exiting with error `Current SBTarget is invalid` caused since `-exec-run` has been handled first.  
 
-Reimplementing a MI command you should save its behavior for all the clients that may use it. Thus, to reimplement one MI command I did following: 
+Reimplementing a MI command you should save its behavior for all the clients that may use it. Thus, to reimplement one MI command I did following:
 1. First of all, using source code and gdb-mi specification which lldb-mi is compatible with, I learned how a command should work.
 2. Changed existing SB API or added a new one.
 3. Finally, implemented a command without _HandleCommand_ hack using methods and data structures from SB API.
 
-If you are interested in all the details of this project you may look at the link to google spreadsheets in which I collected all commits I done during GSoC.
+Here I described how I started my GSoC, how it led us to the problem of testing and how a process of reimplementing a MI command looks like. If you are interested in more details of this project you may look at the link to google spreadsheets where I collected all the commits I done during GSoC.
 
 ## My next plans
