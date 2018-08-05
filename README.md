@@ -1,4 +1,4 @@
-## GSoC 2018 Final Evaluation
+## GSoC 2018 Project Submission
 This blog post documents the work I did for GSoC'18 on the LLVM Compiler Infrastructure project.
 
 ## Title
@@ -60,8 +60,11 @@ To prevent lldb-mi from unexpected failures we decided to test it using llvm too
 Reimplementing a MI command you should save its behavior for all the clients that may use it. Thus, to reimplement one MI command I did following:
 1. First of all, using source code and gdb-mi specification which lldb-mi is compatible with, I learned how a command should work.
 2. Changed existing SB API or added a new one.
-3. Finally, implemented a command without _HandleCommand_ hack using methods and data structures from SB API.
+3. Finally, implemented a command without _HandleCommand_ using methods and data structures from SB API.
 
-Here I described how I started my GSoC, how it led us to the problem of testing and how a process of reimplementing a MI command looks like. If you are interested in more details of this project you may look at the link to google spreadsheets where I collected all the commits I done during GSoC.
+Here I described how I started my GSoC, how it led us to the problem of testing and how a process of reimplementing a MI command looks like. If you are interested in more details of this project you may look at the google [spreadsheet](https://docs.google.com/spreadsheets/d/1B5Ogofs7IdSPg9jKNdMIQy4jd5tKHbOpepiuHPMAR70/edit?usp=sharing) where I collected all the commits I done during GSoC.
 
 ## My next plans
+As were noted, the lldb-mi is currently incomplete: it doesn't implement the whole set of MI commands, so I'll try to add a new commands into it. Also, I'm going to learn more about how a compiler work and then try myself at Clang and LLVM.
+
+Thanks to the LLVM Community for helping me with this project and Google for this awesome program.
