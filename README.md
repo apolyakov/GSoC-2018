@@ -42,8 +42,9 @@ After being accepted by the LLVM Compiler Infrastructure as a GSoC'18 student, I
 ```
 # start lldb-mi session without debug target
 ./lldb-mi
-# create a breakpoint on function with name hit_me, we don't now what is the hit_me,
-# but we want to stop on this function if the target has it
+# create a breakpoint on function with name hit_me, we don't
+# now what is the hit_me, but we want to stop on this
+# function if the target has it
 -break-insert hit_me
 # choose a target
 -file-exec-and-symbols some_binary_with_hit_me
