@@ -70,7 +70,6 @@ As was noted, the lldb-mi is currently incomplete: it doesn't implement the whol
 Thanks to the LLVM Community for helping me with this project and Google for this awesome program.
 
 ## References
-1. https://docs.google.com/spreadsheets/d/1B5Ogofs7IdSPg9jKNdMIQy4jd5tKHbOpepiuHPMAR70/edit?usp=sharing
-2. https://github.com/PolyakovAlexander
-3. https://lldb.llvm.org/
-4. https://ftp.gnu.org/old-gnu/Manuals/gdb/html_chapter/gdb_22.html
+1. [Commits list](https://docs.google.com/spreadsheets/d/1B5Ogofs7IdSPg9jKNdMIQy4jd5tKHbOpepiuHPMAR70/edit?usp=sharing)
+2. [LLDB Homepage](https://lldb.llvm.org/)
+3. [GDB/MI Interface](https://ftp.gnu.org/old-gnu/Manuals/gdb/html_chapter/gdb_22.html)
