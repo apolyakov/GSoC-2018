@@ -58,10 +58,15 @@ The second problem was often happening on heavily loaded machines, such as the b
 
 To prevent lldb-mi from unexpected failures, we decided to test it using LLVM tools: **lit &mdash; LLVM Integrated Tester, and FileCheck &mdash; Flexible pattern matching file verifier**. In this case, we run a lldb-mi session, collect its output and pipe it to the FileCheck. Also, for testing purposes only, we added a new option to lldb-mi &mdash; _synchronous_ ([link to commit](https://github.com/llvm-mirror/lldb/commit/46982f26bc4f11492a81370876cf012fd80d3810)). The lldb-mi consumes input asynchronously from its command handler, so the _synchronous_ option makes sure that the lldb-mi will handle given commands consistently. Thereby we get rid of cases like giving lldb-mi two commands for instance `-file-exec-and-symbols some_binary` and `-exec-run` and exiting with error `Current SBTarget is invalid` caused since `-exec-run` has been handled first.  
 
-Re-implementing a MI command you should save its behavior for all the clients that may use it. Thus, to re-implement one MI command I followed:
-1. using source code and gdb-mi specification which lldb-mi is compatible with, I learned how a command should work.
-2. changed existing SB API or added a new one.
-3. finally, implemented a command without _HandleCommand_ using methods and data structures from SB API.
+Some words about re-implementing a command. When you realize how and what a command should do you start searching an API making things that you need. The LLVM and LLDB has tons of API, so it may take some time until you find it. If you can't find anything that meets your criteria, you may think about adding a new API or modifying an existing one. For example, in [this commit](https://github.com/llvm-mirror/lldb/commit/9aad861805c48c4a05655368b361141a1064847c) I improved an API to be able to get information about an occurred error, that will be useful for other developers in the future.
+
+I'm sure that in software systems everything that can be tested should be tested. I followed this rule during all the GSoC and sometimes testing became a challenging task, I could spend most of the time I worked on a command thinking about the right test case: what should it do, how to link multiple test components together and so on. The best example of this is the target-select command's test([link to commit](https://github.com/llvm-mirror/lldb/commit/41e8493dce7c03d30a33f1f46190c1e8ee613d86)). Writing a test for this patch I faced with a few problems: the first one is that the lit isn't a good choice when your test depends on a non-constant data, for example tcp port number. I solved this problem by choosing a port in a python runtime and changing the specific string in the test - `$PORT`, with a found tcp port. Choosing a port is the second problem, of course you can just pick it randomly, but this is error prone since randomly chosen port might be already used by some application. So, we decided to let lldb-server choose a port, get its number and connect to it. It guarantees us that chosen port will be free.
+
+Taking into consideration all that was discussed re-implementing a MI command for me looked like:
+1. using source code and gdb-mi specification which lldb-mi is compatible with, learn how a command should work
+2. change existing SB API or add a new one
+3. implement a command without _HandleCommand_ using methods and data structures from SB API
+4. write a test
 
 Here I described how I started my GSoC project, how it led us to the problem of testing and how a process of re-implementing a MI command looks like. If you are interested in more details of this project you may look at the google [spreadsheet](https://docs.google.com/spreadsheets/d/1B5Ogofs7IdSPg9jKNdMIQy4jd5tKHbOpepiuHPMAR70/edit?usp=sharing) where I collected all the commits I did during GSoC.
 
